@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader, Card, FormField } from "../components";
 
 const RenderCards = ({ data, title }) => {
@@ -19,6 +19,48 @@ const Home = () => {
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [searchedResults, setSearchedResults] = useState(null);
 
+  const fetchPosts = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:8080/api/v1/post", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setAllPosts(result.data.reverse());
+      }
+      console.log("response: " + response.ok);
+    } catch (error) {
+      console.log("fuck here");
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const handleSearchChange = (e) => {
+    clearTimeout(searchTimeout);
+
+    setSearchText(e.target.value);
+
+    setSearchTimeout(
+      setTimeout(() => {
+        const searchResults = allPosts.filter(
+          (item) =>
+            item.name.toLowerCase().include(searchText.toLowerCase()) ||
+            item.prompt.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setSearchedResults(searchResults);
+      }, 500)
+    );
+  };
+
   return (
     <section className="max-w-7xl mx-auto">
       <div>
@@ -31,14 +73,14 @@ const Home = () => {
         </p>
       </div>
       <div className="mt-16">
-        {/* <FormField
+        <FormField
           labelName="Search posts"
           type="text"
           name="text"
           placeholder="Search something..."
           value={searchText}
           handleChange={handleSearchChange}
-        /> */}
+        />
       </div>
       <div className="mt-10">
         {loading ? (
