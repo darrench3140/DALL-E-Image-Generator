@@ -31,9 +31,7 @@ const Home = () => {
         const result = await response.json();
         setAllPosts(result.data.reverse());
       }
-      console.log("response: " + response.ok);
     } catch (error) {
-      console.log("fuck here");
       setLoading(false);
     } finally {
       setLoading(false);
