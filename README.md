@@ -5,4 +5,5 @@ Go check out [My website](https://dall-e-image-generator-eight.vercel.app/)
 
 ## Deployed
 Server deployed in Render
+
 Client deployed in Vercel
